@@ -7,7 +7,7 @@ DISASM_TMP := target/$(TARGET)/$(MODE)/asm
 OFFLINE :=
 
 # BOARD
-BOARD := qemu
+BOARD := qemu-7
 SBI ?= rustsbi
 BOOTLOADER := ../bootloader/$(SBI)-$(BOARD).bin
 
