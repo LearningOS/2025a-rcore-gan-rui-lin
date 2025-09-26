@@ -12,8 +12,10 @@ endif
 
 # BOARD
 BOARD := qemu
+BOARD_LOCAL := qemu-7
 SBI ?= rustsbi
 BOOTLOADER := ../bootloader/$(SBI)-$(BOARD).bin
+BOOTLOADER_LOCAL := ../bootloader/$(SBI)-$(BOARD_LOCAL).bin
 
 # KERNEL ENTRY
 KERNEL_ENTRY_PA := 0x80200000
@@ -53,6 +55,16 @@ disasm-vim: kernel
 
 run: run-inner
 
+runl: run-innerl
+
+
+run-innerl: build
+	@qemu-system-riscv64 \
+		-machine virt \
+		-nographic \
+		-bios $(BOOTLOADER_LOCAL) \
+		-device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA)
+
 run-inner: build
 	@qemu-system-riscv64 \
 		-machine virt \
@@ -60,6 +72,7 @@ run-inner: build
 		-bios $(BOOTLOADER) \
 		-device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA)
 
+# 未适配本地 qemu7 版本
 debug: build
 	@tmux new-session -d \
 		"qemu-system-riscv64 -machine virt -nographic -bios $(BOOTLOADER) -device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA) -s -S" && \
